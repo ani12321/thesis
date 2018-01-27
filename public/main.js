@@ -1,6 +1,7 @@
+// let io = require('socket.io-client');
+require('rtcmulticonnection')
 
 var socket = io.connect();
-require('./libs/RTCMultiConnection')
 
 // using single socket for RTCMultiConnection signaling
 var onMessageCallbacks = {};
@@ -49,7 +50,7 @@ connection.getExternalIceServers = false;
 
 connection.onstream = function (event) {
     connection.body.appendChild(event.mediaElement);
-
+    console.log(connection)
     if (connection.isInitiator == false && !connection.broadcastingConnection) {
         // "connection.broadcastingConnection" global-level object is used
         // instead of using a closure object, i.e. "privateConnection"
@@ -86,7 +87,31 @@ connection.onstream = function (event) {
 // ask node.js server to look for a broadcast
 // if broadcast is available, simply join it. i.e. "join-broadcaster" event should be emitted.
 // if broadcast is absent, simply create it. i.e. "start-broadcasting" event should be fired.
-document.getElementById('open-or-join').onclick = function () {
+document.getElementById('create').onclick = function () {
+    var broadcastid = document.getElementById('broadcast-id').value;
+    if (broadcastid.replace(/^\s+|\s+$/g, '').length <= 0) {
+        alert('Please enter broadcast-id');
+        document.getElementById('broadcast-id').focus();
+        return;
+    }
+
+    this.disabled = true;
+
+    connection.session = {
+        video: document.getElementById('broadcast-options').value.indexOf('Video') !== -1,
+        screen: document.getElementById('broadcast-options').value.indexOf('Screen') !== -1,
+        audio: document.getElementById('broadcast-options').value.indexOf('Audio') !== -1,
+        oneway: true
+    };
+
+    socket.emit('create-broadcast', {
+        broadcastid: broadcastid,
+        userid: connection.userid,
+        typeOfStreams: connection.session
+    });
+};
+
+document.getElementById('join').onclick = function () {
     var broadcastid = document.getElementById('broadcast-id').value;
     if (broadcastid.replace(/^\s+|\s+$/g, '').length <= 0) {
         alert('Please enter broadcast-id');
@@ -109,6 +134,7 @@ document.getElementById('open-or-join').onclick = function () {
         typeOfStreams: connection.session
     });
 };
+
 
 // this event is emitted when a broadcast is already created.
 socket.on('join-broadcaster', function (broadcaster, typeOfStreams) {

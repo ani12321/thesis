@@ -12,4 +12,4 @@ app = app.listen(process.env.PORT || 8888, process.env.IP || "0.0.0.0", function
     console.log("Server listening at", addr.address + ":" + addr.port);
 });
 
-require('./WebRTC-Scalable-Broadcast.js')(app);
+require('./socket')(app);

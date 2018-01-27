@@ -35,6 +35,8 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "express": "^4.16.2",
+    "rtcmulticonnection": "^2.2.5",
+    "rtcmulticonnection-v3": "^3.4.4",
     "socket.io": "0.9.x"
   },
   "bugs": {
