@@ -1,4 +1,4 @@
-module.exports = exports = Socket;
+let Container = require("./container");
 
 function Socket(app) {
     var io = require('socket.io').listen(app, {
@@ -12,39 +12,25 @@ function Socket(app) {
         'jsonp-polling'
     ]);
 
-    var listOfBroadcasts = {};
+    let container = new Container();
 
     io.on('connection', function(socket) {
         var currentUser;
 
         socket.on('create-broadcast', (user) => {
             currentUser = user;
-
-            user.numberOfViewers = 0;
-            listOfBroadcasts[user.broadcastid] = {
-                broadcast: null,
-                users: {},
-                typeOfStreams: user.typeOfStreams // object-booleans: audio, video, screen
-            };
-
-            currentUser.isInitiator = true;
+            container.startBroadcast(user);
             socket.emit('start-broadcasting', user.typeOfStreams);
-
-            listOfBroadcasts[user.broadcastid].broadcaster = user;
-            listOfBroadcasts[user.broadcastid].users[user.userid] = user;
             console.log('User <', user.userid, '> created a broadcast.');
         })
 
         socket.on('join-broadcast', function(user) {
             currentUser = user;
-            user.numberOfViewers = 0;
-
-            listOfBroadcasts[user.broadcastid].broadcaster.numberOfViewers++;
-            socket.emit('join-broadcaster', listOfBroadcasts[user.broadcastid].broadcaster, listOfBroadcasts[user.broadcastid].typeOfStreams);
-
-            console.log('User <', user.userid, '> is trying to get stream from user <', listOfBroadcasts[user.broadcastid].broadcaster.userid, '>');
-
-            listOfBroadcasts[user.broadcastid].users[user.userid] = user;
+            const broadcastId = user.broadcastid;
+            const broadcast = container.get(broadcastId);
+            container.joinBroadcast(broadcastId, user);
+            socket.emit('join-broadcaster', broadcast.broadcaster, broadcast.streams);
+            console.log('User <', user.userid, '> is trying to get stream from user <', broadcast.broadcaster.userid, '>');
         });
 
         socket.on('message', function(message) {
@@ -53,13 +39,17 @@ function Socket(app) {
 
         socket.on('disconnect', function() {
             if (!currentUser) return;
-            if (!listOfBroadcasts[currentUser.broadcastid]) return;
-            if (!listOfBroadcasts[currentUser.broadcastid].broadcaster) return;
-
-            listOfBroadcasts[currentUser.broadcastid].broadcaster = null;
-            if (currentUser.isInitiator) {
-                delete listOfBroadcasts[currentUser.broadcastid];
+            if (currentUser.broadcaster) {
+                container.stopBroadcast(currentUser.broadcastid);
+                console.log(`Broadcast <${currentUser.broadcastid}> ended`);
+            }
+            else {
+                container.leaveBroadcast(currentUser.broadcastid, currentUser.userid);
+                console.log(`User <${currentUser.userid}> left broadcast <${currentUser.broadcastid}>`);
             }
         });
     });
 }
+
+
+module.exports = Socket;
