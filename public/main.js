@@ -84,9 +84,6 @@ connection.onstream = function (event) {
     }
 };
 
-// ask node.js server to look for a broadcast
-// if broadcast is available, simply join it. i.e. "join-broadcaster" event should be emitted.
-// if broadcast is absent, simply create it. i.e. "start-broadcasting" event should be fired.
 document.getElementById('create').onclick = function () {
     var broadcastid = document.getElementById('broadcast-id').value;
     if (broadcastid.replace(/^\s+|\s+$/g, '').length <= 0) {

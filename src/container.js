@@ -1,3 +1,5 @@
+let Graph = require('./graph');
+let StreamAlgorithm = require('./stream-algorithm');
 
 class Container {
 
@@ -17,6 +19,8 @@ class Container {
             streams: user.typeOfStreams // object-booleans: audio, video, screen
         }
 
+        this.broadcasts[broadcastId].graph = new Graph(this.broadcasts[broadcastId]);
+
         user.broadcaster = true;
         return this.broadcasts[broadcastId];
     }
@@ -25,9 +29,16 @@ class Container {
      * Client enters a live broadcast
      * @param {string} broadcastId
      * @param {object} user
+     *
+     * @returns {object} The stream host
      */
     joinBroadcast(broadcastId, user) {
-        this.broadcasts[broadcastId].clients[user.userid] = user;
+        const broadcast = this.get(broadcastId);
+        broadcast.clients[user.userid] = user;
+
+        broadcast.graph.reorder(this.broadcasts[broadcastId]);
+        let streamHost = StreamAlgorithm(broadcast);
+        return streamHost;
     }
 
     /**

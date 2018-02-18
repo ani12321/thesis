@@ -28,9 +28,11 @@ function Socket(app) {
             currentUser = user;
             const broadcastId = user.broadcastid;
             const broadcast = container.get(broadcastId);
-            container.joinBroadcast(broadcastId, user);
-            socket.emit('join-broadcaster', broadcast.broadcaster, broadcast.streams);
-            console.log('User <', user.userid, '> is trying to get stream from user <', broadcast.broadcaster.userid, '>');
+            let streamHost  = container.joinBroadcast(broadcastId, user);
+
+            // TODO: here we should send the client that is calculated from the algorithm
+            socket.emit('join-broadcaster', streamHost, broadcast.streams);
+            console.log('User <', user.userid, '> is trying to get stream from user <', streamHost.userid, '>');
         });
 
         socket.on('message', function(message) {
