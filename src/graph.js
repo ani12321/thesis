@@ -1,4 +1,5 @@
 let Graph = require("graphlib").Graph;
+let Alg = require("graphlib").alg;
 
 // let g = new Graph();
 // g.setNode("a");
@@ -40,23 +41,37 @@ class GraphData {
         for(let client in clients) {
             this.graph.setNode(clients[client].userid)
             this.graph.setEdge(this.broadcast.broadcaster.userid, clients[client].userid, {
-                weight: 10
+                weight: 10 // TODO: calculate the weights
+            });
+
+            this.graph.setEdge(clients[client].userid, this.broadcast.broadcaster.userid, {
+                weight: 10 // TODO: calculate the weights
             });
         }
 
-
-        // console.log(g.nodeCount());
-        // console.log(g.edgeCount());
-
-
-        // console.log(g.nodes());
         console.log(this.graph.edges());
+    }
 
-        // console.log(g.sources())
+    add(userId, broadcasterId) {
+        this.graph.setNode(userId);
+        this.graph.setEdge(broadcasterId, userId, {
+            weight: 10
+        });
+
+        this.graph.setEdge(userId, broadcasterId, {
+            weight: 10
+        });
+        console.log(this.graph.edges());
     }
 
     join(client) {
 
+    }
+
+    shortestPath(userId) {
+        console.log(this.graph.edges());
+
+        return Alg.dijkstra(this.graph, userId.toString(), (e) => this.graph.edge(e))
     }
 
 }

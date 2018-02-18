@@ -30,7 +30,6 @@ function Socket(app) {
             const broadcast = container.get(broadcastId);
             let streamHost  = container.joinBroadcast(broadcastId, user);
 
-            // TODO: here we should send the client that is calculated from the algorithm
             socket.emit('join-broadcaster', streamHost, broadcast.streams);
             console.log('User <', user.userid, '> is trying to get stream from user <', streamHost.userid, '>');
         });

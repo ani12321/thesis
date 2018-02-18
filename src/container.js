@@ -36,8 +36,9 @@ class Container {
         const broadcast = this.get(broadcastId);
         broadcast.clients[user.userid] = user;
 
-        broadcast.graph.reorder(this.broadcasts[broadcastId]);
-        let streamHost = StreamAlgorithm(broadcast);
+        // broadcast.graph.reorder(this.broadcasts[broadcastId]);
+
+        let streamHost = StreamAlgorithm(broadcast, user);
         return streamHost;
     }
 
