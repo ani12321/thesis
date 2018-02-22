@@ -50,7 +50,13 @@ connection.getExternalIceServers = false;
 
 connection.onstream = function (event) {
     connection.body.appendChild(event.mediaElement);
-    console.log(connection)
+    if (event.type === 'remote') {
+        var heJoinedAt = new Date(event.extra.joinedAt).getTime();
+        var currentDate = new Date().getTime();
+        var latency = currentDate - heJoinedAt;
+        console.log(latency)
+    }
+
     if (connection.isInitiator == false && !connection.broadcastingConnection) {
         // "connection.broadcastingConnection" global-level object is used
         // instead of using a closure object, i.e. "privateConnection"
@@ -123,6 +129,10 @@ document.getElementById('join').onclick = function () {
         screen: document.getElementById('broadcast-options').value.indexOf('Screen') !== -1,
         audio: document.getElementById('broadcast-options').value.indexOf('Audio') !== -1,
         oneway: true
+    };
+
+    connection.extra = {
+        joinedAt: (new Date).toISOString()
     };
 
     socket.emit('join-broadcast', {
