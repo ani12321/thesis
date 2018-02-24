@@ -51,7 +51,6 @@ function initRTCMultiConnection(userid) {
 
 // this RTCMultiConnection object is used to connect with existing users
 var connection = initRTCMultiConnection();
-
 connection.getExternalIceServers = false;
 
 connection.onstream = function (event) {
