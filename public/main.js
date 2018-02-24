@@ -1,7 +1,13 @@
-// let io = require('socket.io-client');
-require('rtcmulticonnection')
-
+require('rtcmulticonnection');
 var socket = io.connect();
+let Client = require('./client');
+
+Client
+.load()
+.then(() => {
+    console.log(Client.data);
+})
+
 
 // using single socket for RTCMultiConnection signaling
 var onMessageCallbacks = {};
@@ -138,7 +144,8 @@ document.getElementById('join').onclick = function () {
     socket.emit('join-broadcast', {
         broadcastid: broadcastid,
         userid: connection.userid,
-        typeOfStreams: connection.session
+        typeOfStreams: connection.session,
+        data: Client.data
     });
 };
 
