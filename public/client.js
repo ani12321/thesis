@@ -16,7 +16,7 @@ class Client {
 
     loadGeo() {
         return fetch(GEO_URL)
-        .then((response) => response.text())
+        .then((response) => response.json())
         .then((data) => {
             this.updateData({
                 geo: data

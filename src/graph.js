@@ -1,26 +1,6 @@
 let Graph = require("graphlib").Graph;
 let Alg = require("graphlib").alg;
-
-// let g = new Graph();
-// g.setNode("a");
-// g.setNode("b", "b's value");
-// g.setNode("c", { k: 123 });
-
-// g.setEdge("a", "b", "my-label");
-// g.setEdge("a", "c", "7");
-
-// console.log(g.edge({ v: "a", w: "b" }));
-
-// console.log(g.nodeCount());
-// console.log(g.edgeCount());
-
-
-// console.log(g.nodes());
-// console.log(g.edges());
-
-// console.log(g.sources())
-
-
+let json = require("graphlib").json;
 
 class GraphData {
 
@@ -49,22 +29,17 @@ class GraphData {
 
     }
 
-    add(userId, broadcasterId) {
+    add(userId, broadcasterId, weight) {
         this.graph.setNode(userId);
         this.graph.setEdge(broadcasterId, userId, {
-            weight: 10
+            weight: weight
         });
-    }
-
-    join(client) {
-
     }
 
     shortestPath(userId) {
         if(this.graph.edges().length == 0) return this.broadcast.broadcaster;
 
         let distances = Alg.dijkstra(this.graph, userId, (e) => this.graph.edge(e).weight)
-        console.log(this.graph.edges())
         let paths = [];
         for(var key in distances) {
             if(distances[key].distance == 0) continue;
@@ -75,10 +50,23 @@ class GraphData {
             })
         }
 
-        console.log(paths)
         paths.sort((a, b) => a.distance > b.distance)
         let selectedNode = paths[0].node;
+        if (selectedNode == this.broadcast.broadcaster.userid) return this.broadcast.broadcaster;
         return this.broadcast.clients[selectedNode];
+    }
+
+    clone() {
+        const data = json.write(this.graph);
+        let newGraph = json.read(data);
+
+        let newGraphData = new GraphData(this.broadcast);
+        newGraphData.graph = newGraph;
+        return newGraphData;
+    }
+
+    serialize() {
+        return json.write(this.graph);
     }
 
 }

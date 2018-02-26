@@ -1,11 +1,25 @@
 module.exports = function(broadcast, userToJoin) {
-    // TODO: extend the algorithm
-    let streamHost = broadcast.graph.shortestPath(userToJoin.userid)
-    // at this moment the userToJoin is not in the graph
-    // and therefore we cannot find his shortest path.
-    // need to find a solution for this.
+    const graph = broadcast.graph.clone();
+    let nodes = graph.graph.nodes();
 
-    broadcast.graph.add(userToJoin.userid, streamHost.userid)
+    nodes.forEach(node => {
+        let client;
+        if (node == broadcast.broadcaster.userid) {
+            client = broadcast.broadcaster
+        }
+        else {
+            client = broadcast.clients[node];
+            const streamsNumber = graph.graph.outEdges(node).length;
+            if (streamsNumber >= client.data.capabilities) return;
+        }
+
+        // TODO: find the weight here
+        graph.add(userToJoin.userid, client.userid, 10)
+    });
+
+    let streamHost = graph.shortestPath(userToJoin.userid)
+    if (streamHost)
+        broadcast.graph.add(userToJoin.userid, streamHost.userid, 10) // TODO: add weight here
 
     return streamHost;
 }
