@@ -15,6 +15,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "express": "^4.16.2",
+    "geodist": "^0.2.1",
     "graphlib": "^2.1.5",
     "rtcmulticonnection": "^2.2.5",
     "socket.io": "0.9.x",

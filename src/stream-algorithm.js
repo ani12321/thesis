@@ -1,3 +1,5 @@
+geodist = require('geodist');
+
 module.exports = function(broadcast, userToJoin) {
     const graph = broadcast.graph.clone();
     let nodes = graph.graph.nodes();
@@ -13,13 +15,40 @@ module.exports = function(broadcast, userToJoin) {
             if (streamsNumber >= client.data.capabilities) return;
         }
 
-        // TODO: find the weight here
-        graph.add(userToJoin.userid, client.userid, 10)
+        let weight = 2000;
+        if (userToJoin.geo && client.geo) {
+            weight = geodist({
+                lat: userToJoin.geo.latitude,
+                lon: userToJoin.geo.longitude
+            }, {
+                lat: client.geo.latitude,
+                lon: client.geo.longitude
+            }, {
+                unit: 'km'
+            })
+        }
+
+        graph.add(userToJoin.userid, client.userid, weight)
     });
 
     let streamHost = graph.shortestPath(userToJoin.userid)
-    if (streamHost)
-        broadcast.graph.add(userToJoin.userid, streamHost.userid, 10) // TODO: add weight here
+    if (streamHost) {
+
+        let weight = 2000;
+        if (userToJoin.geo && streamHost.geo) {
+            weight = geodist({
+                lat: userToJoin.geo.latitude,
+                lon: userToJoin.geo.longitude
+            }, {
+                lat: streamHost.geo.latitude,
+                lon: streamHost.geo.longitude
+            }, {
+                unit: 'km'
+            })
+        }
+
+        broadcast.graph.add(userToJoin.userid, streamHost.userid, weight);
+    }
 
     return streamHost;
 }
