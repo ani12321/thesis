@@ -13,22 +13,6 @@ class GraphData {
         this.graph.setNode(this.broadcast.broadcaster.userid);
     }
 
-    reorder() {
-        if (!this.broadcast) return;
-        const clients = this.broadcast.clients;
-
-        this.graph = new Graph();
-        this.graph.setNode(this.broadcast.broadcaster.userid);
-
-        for(let client in clients) {
-            this.graph.setNode(clients[client].userid)
-            this.graph.setEdge(this.broadcast.broadcaster.userid, clients[client].userid, {
-                weight: 10 // TODO: calculate the weights
-            });
-        }
-
-    }
-
     add(userId, broadcasterId, weight) {
         this.graph.setNode(userId);
         this.graph.setEdge(broadcasterId, userId, {

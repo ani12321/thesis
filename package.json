@@ -1,8 +1,8 @@
 {
-  "name": "webrtc-scalable-broadcast",
+  "name": "p2p-video-streaming",
   "preferGlobal": false,
   "version": "1.0.5",
-  "description": "Scalable WebRTC peer-to-peer broadcasting demo.",
+  "description": "P2P web video streaming.",
   "scripts": {
     "start": "node ./src/server.js",
     "build": "webpack",
