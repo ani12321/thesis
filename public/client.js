@@ -1,4 +1,4 @@
-const GEO_URL = 'http://freegeoip.net/json/';
+const GEO_URL = 'https://freegeoip.net/json/';
 
 class Client {
     constructor() {
