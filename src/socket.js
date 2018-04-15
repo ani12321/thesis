@@ -28,6 +28,7 @@ function Socket(app) {
             currentUser = user;
             const broadcastId = user.broadcastid;
             const broadcast = container.get(broadcastId);
+            if (!broadcast) return;
             let streamHost  = container.joinBroadcast(broadcastId, user);
 
             socket.emit('join-broadcaster', streamHost, broadcast.streams);

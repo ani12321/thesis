@@ -2,6 +2,10 @@ video {
     width: 30%;
 }
 
+button {
+    margin-top: 10px;
+}
+
 button,
 input,
 select {

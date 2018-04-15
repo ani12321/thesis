@@ -104,6 +104,8 @@ document.getElementById('create').onclick = function () {
     }
 
     this.disabled = true;
+    document.getElementById('join').disabled = true;
+
 
     connection.session = {
         video: document.getElementById('broadcast-options').value.indexOf('Video') !== -1,
@@ -128,6 +130,7 @@ document.getElementById('join').onclick = function () {
     }
 
     this.disabled = true;
+    document.getElementById('create').disabled = true;
 
     connection.session = {
         video: document.getElementById('broadcast-options').value.indexOf('Video') !== -1,

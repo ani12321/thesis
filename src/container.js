@@ -34,6 +34,7 @@ class Container {
      */
     joinBroadcast(broadcastId, user) {
         const broadcast = this.get(broadcastId);
+        if (!broadcast) return;
         broadcast.clients[user.userid] = user;
 
         // broadcast.graph.reorder(this.broadcasts[broadcastId]);
