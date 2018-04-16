@@ -12,6 +12,7 @@ module.exports = function(broadcast, userToJoin) {
         else {
             client = broadcast.clients[node];
             const streamsNumber = graph.graph.outEdges(node).length;
+            if (!client) return;
             if (streamsNumber >= client.data.capabilities) return;
         }
 
